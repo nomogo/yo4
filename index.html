@@ -59,115 +59,111 @@
     
 
     <head>
-        <title>Calculateur de coût de service</title>
-        
-      </head>
-      
-        <h1>Calculateur du coût de la commande</h1>
-      
-        <label for="product">Choisissez un produit:</label>
-        <select id="product">
-         <option value="10">Produit 1 (10 euros)</option> 
-         <option value="25">Produit 2 (25 euros)</option> 
-         <option value="50">Produit 3 (50 euros)</option>
-        </select>
-      
-        <button onclick="calculateCost()">Calculer le coût</button>
-      
-        <p id="cost">Coût de la commande: </p>
-      
-        <label for="quantity">Quantité de produits:</label>
-        <input type="number" id="quantity" min="1" value="1">
-      
-        <h2>Calculateur de coût de service</h2>
-      
-        <label for="serviceType">Type de service:</label><br>
-        <input type="radio" id="serviceType1" name="serviceType" value="1" checked>
-        <label for="serviceType1">Service 1</label><br>
-        <input type="radio" id="serviceType2" name="serviceType" value="2">
-        <label for="serviceType2">Service 2</label><br>
-        <input type="radio" id="serviceType3" name="serviceType" value="3">
-        <label for="serviceType3">Service 3</label><br>
-      
-        <div id="serviceOptions">
-          <!-- Options et propriétés seront affichées ici -->
+       <div class="calculator">
+        <h2>Calculateur de Coût de Service</h2>
+        <label for="quantity">Quantité:</label>
+        <input type="number" id="quantity" value="1">
+
+        <label>Type de service:</label>
+        <input type="radio" name="service" id="service1" value="service1" checked>
+        <label for="service1">iphone 11</label>
+        <input type="radio" name="service" id="service2" value="service2">
+        <label for="service2">iphone 15</label>
+        <input type="radio" name="service" id="service3" value="service3">
+        <label for="service3">iphone 17</label>
+
+        <div id="product-options">
+            </div>
+
+        <div id="product-property">
+            </div>
+
+        <div class="result">
+            Prix total: <span id="total-price">0</span> €
         </div>
-      
-        <p id="serviceCost">Coût du service: </p>
-      
-        <script>
-          const productSelect = document.getElementById('product');
-          const quantityInput = document.getElementById('quantity');
-          const serviceTypeRadios = document.querySelectorAll('input[name="serviceType"]');
-          const serviceOptionsDiv = document.getElementById('serviceOptions');
-          const serviceCostP = document.getElementById('serviceCost');
-      
-          function calculateCost() {
+
+        <button id="calculate-price">Calculer le coût</button>
+        <button id="show-total">Afficher la somme</button>
+
+    </div>
+
+    <script>
+        const quantityInput = document.getElementById('quantity');
+        const serviceRadios = document.querySelectorAll('input[name="service"]');
+        const productOptionsDiv = document.getElementById('product-options');
+        const productPropertyDiv = document.getElementById('product-property');
+        const totalPriceSpan = document.getElementById('total-price');
+        const calculatePriceButton = document.getElementById('calculate-price');
+        const showTotalButton = document.getElementById('show-total');
+
+        // Fonction pour mettre à jour le prix total
+        function updateTotalPrice() {
             const quantity = parseInt(quantityInput.value);
-            const productPrice = parseInt(productSelect.value);
-            const cost = quantity * productPrice;
-            document.getElementById('cost').textContent = "Coût de la commande: " + cost + " euros";
-          }
-      
-          function updateServiceOptions() {
-            serviceOptionsDiv.innerHTML = ''; // Effacer les options précédentes
-      
-            const selectedService = document.querySelector('input[name="serviceType"]:checked').value;
-      
-            if (selectedService === '2') { // Service 2 : Options
-              const select = document.createElement('select');
-              select.id = 'serviceOption';
-              const option1 = document.createElement('option');
-              option1.value = '10';
-              option1.text = 'Option 1 (10 euros)';
-              const option2 = document.createElement('option');
-              option2.value = '20';
-              option2.text = 'Option 2 (20 euros)';
-              select.appendChild(option1);
-              select.appendChild(option2);
-              serviceOptionsDiv.appendChild(select);
-            } else if (selectedService === '3') { // Service 3 : Propriété
-              const checkbox = document.createElement('input');
-              checkbox.type = 'checkbox';
-              checkbox.id = 'serviceProperty';
-              const label = document.createElement('label');
-              label.htmlFor = 'serviceProperty';
-              label.textContent = 'Propriété (15 euros)';
-              serviceOptionsDiv.appendChild(checkbox);
-              serviceOptionsDiv.appendChild(label);
+            let price = 0;
+            const selectedService = document.querySelector('input[name="service"]:checked').value;
+
+            if (selectedService === 'service1') {
+                price = quantity * 250; // Prix du service 1
+            } else if (selectedService === 'service2') {
+                const selectedOption = productOptionsDiv.querySelector('select').value;
+                if (selectedOption === 'option1') {
+                    price = quantity * 600; // Prix du service 2 avec l'option 1
+                } else if (selectedOption === 'option2') {
+                    price = quantity * 20; // Prix du service 2 avec l'option 2
+                }
+            } else if (selectedService === 'service3') {
+                price = quantity * 900; // Prix du service 3 de base
+                if (productPropertyDiv.querySelector('input[type="checkbox"]').checked) {
+                    price += quantity * 15; // Prix de la fonctionnalité supplémentaire
+                }
             }
-      
-            calculateServiceCost();
-          }
-      
-          function calculateServiceCost() {
-            const selectedService = document.querySelector('input[name="serviceType"]:checked').value;
-            let servicePrice = 0;
-      
-            if (selectedService === '2') {
-              const serviceOption = document.getElementById('serviceOption');
-              servicePrice = parseInt(serviceOption.value);
-            } else if (selectedService === '3') {
-              const serviceProperty = document.getElementById('serviceProperty');
-              if (serviceProperty.checked) {
-                servicePrice = 15;
-              }
-            }
-      
-            serviceCostP.textContent = "Coût du service: " + servicePrice + " euros";
-          }
-      
-          // Appeler updateServiceOptions() au chargement de la page
-          updateServiceOptions();
-      
-          // Écouteurs d'événements pour les changements
-          productSelect.addEventListener('change', calculateCost);
-          quantityInput.addEventListener('change', calculateCost);
-          serviceTypeRadios.forEach(radio => radio.addEventListener('change', updateServiceOptions));
-      
-          // Écouteurs d'événements pour les options et propriétés du service
-          serviceOptionsDiv.addEventListener('change', calculateServiceCost);
-        </script>
+
+            totalPriceSpan.textContent = price;
+        }
+
+        // Gestionnaires d'événements pour les changements de valeurs
+        quantityInput.addEventListener('input', updateTotalPrice);
+
+        serviceRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                productOptionsDiv.innerHTML = ''; // Efface les options précédentes
+                productPropertyDiv.innerHTML = ''; // Efface la propriété précédente
+
+                const selectedService = radio.value;
+                if (selectedService === 'service2') {
+                    // Afficher la sélection d'options pour le service 2
+                    const select = document.createElement('select');
+                    select.innerHTML = '<option value="option1">Option 1</option><option value="option2">Option 2</option>';
+                    productOptionsDiv.appendChild(select);
+                } else if (selectedService === 'service3') {
+                    // Afficher la case à cocher pour le service 3
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = 'property';
+                    const label = document.createElement('label');
+                    label.htmlFor = 'property';
+                    label.textContent = 'Fonctionnalité supplémentaire';
+                    productPropertyDiv.appendChild(checkbox);
+                    productPropertyDiv.appendChild(label);
+                }
+
+                updateTotalPrice(); // Met à jour le prix total
+            });
+        });
+
+        // Appeler la fonction updateTotalPrice au chargement de la page
+        updateTotalPrice();
+
+        // Gestionnaire d'événement pour le bouton "Calculer le coût"
+        calculatePriceButton.addEventListener('click', updateTotalPrice);
+
+        // Gestionnaire d'événement pour le bouton "Afficher la somme"
+        showTotalButton.addEventListener('click', () => {
+            const totalPrice = parseFloat(totalPriceSpan.textContent);
+            alert(`La somme totale est : ${totalPrice} €`);
+        });
+    </script>
+       
 
     <header id="list">
     <div class="link">
